@@ -15,7 +15,7 @@ const SignupForm = () => {
   const [isVisiblePass, setIsVisiblePass] = useState(false);
   const toggleVisiblePass = () => setIsVisiblePass((prev) => !prev);
   return (
-    <form className="grid grid-cols-2 gap-3 p-2 shadow border rounded-md">
+    <form className="grid grid-cols-2 gap-3 p-2 shadow border rounded-md place-self-stretch">
       <Input label="First Name" startContent={<UserIcon className="w-4" />} />
       <Input label="Last Name" startContent={<UserIcon className="w-4" />} />
       <Input
