@@ -10,6 +10,45 @@ import {
 } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import Link from "next/link";
+import { z } from "zod";
+import validator from "validator";
+import errorMap from "zod/locales/en.js";
+
+const FormSchema = z
+  .object({
+    firstName: z
+      .string()
+      .min(2, "First name must be atleast 2 characters")
+      .max(45, "First name must be less than 45 characters")
+      .regex(new RegExp("^[a-zA-Z]+$"), "No special character allowed!"),
+    lastName: z
+      .string()
+      .min(2, "Last name must be atleast 2 characters")
+      .max(45, "Last name must be less than 45 characters")
+      .regex(new RegExp("^[a-zA-Z]+$"), "No special character allowed!"),
+    email: z.string().email("Please enter a valid email address"),
+    phone: z
+      .string()
+      .refine(validator.isMobilePhone, "Please enter a valid phone number"),
+    // validator checks whether the input is phone number or not,
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 char.")
+      .max(50, "password must be less than 50 characters"),
+    confirmPassword: z
+      .string()
+      .min(6, "Password must be at least 6 char.")
+      .max(50, "password must be less than 50 characters"),
+    accepted: z.literal(true, {
+      errorMap: () => ({
+        message: "Please accept the terms",
+      }),
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Password and confirm password doesn't match!",
+    path: ["password", "confirmPassword"],
+  });
 
 const SignupForm = () => {
   const [isVisiblePass, setIsVisiblePass] = useState(false);
