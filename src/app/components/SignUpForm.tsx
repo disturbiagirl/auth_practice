@@ -8,12 +8,14 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/20/solid";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { z } from "zod";
 import validator from "validator";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { passwordStrength } from "check-password-strength";
+import PasswordStrength from "./PasswordStrength";
 
 const FormSchema = z
   .object({
@@ -59,12 +61,19 @@ const SignupForm = () => {
     handleSubmit,
     reset,
     control,
+    watch,
     formState: { errors },
   } = useForm<InputType>({
     resolver: zodResolver(FormSchema),
   });
+  const [passStrength, setPassStrength] = useState(0);
   const [isVisiblePass, setIsVisiblePass] = useState(false);
   const toggleVisiblePass = () => setIsVisiblePass((prev) => !prev);
+
+  useEffect(() => {
+    setPassStrength(passwordStrength(watch().password).id);
+  }, [watch().password]);
+
   const saveUser: SubmitHandler<InputType> = async (data) => {
     console.log(data);
   };
@@ -125,6 +134,7 @@ const SignupForm = () => {
           )
         }
       />
+      <PasswordStrength passStrength={passStrength} />
       <Input
         errorMessage={errors.confirmPassword?.message}
         isInvalid={!!errors.confirmPassword}
