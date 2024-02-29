@@ -76,7 +76,7 @@ const SignupForm = () => {
   }, [watch().password]);
 
   const saveUser: SubmitHandler<InputType> = async (data) => {
-    console.log(data);
+    const { accepted, confirmPassword, ...user } = data;
   };
   return (
     <form
