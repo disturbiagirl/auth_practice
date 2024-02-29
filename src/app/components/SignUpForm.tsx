@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { passwordStrength } from "check-password-strength";
 import PasswordStrength from "./PasswordStrength";
 
+// The schema for the form data sets up the rules for the form inputs and errors
 const FormSchema = z
   .object({
     firstName: z
