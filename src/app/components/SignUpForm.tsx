@@ -16,6 +16,8 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { passwordStrength } from "check-password-strength";
 import PasswordStrength from "./PasswordStrength";
+import { registerUser } from "@/lib/actions/authActions";
+import { toast } from "react-toastify";
 
 // The schema for the form data sets up the rules for the form inputs and errors
 const FormSchema = z
@@ -77,7 +79,15 @@ const SignupForm = () => {
 
   const saveUser: SubmitHandler<InputType> = async (data) => {
     const { accepted, confirmPassword, ...user } = data;
+    try {
+      const result = await registerUser(user);
+      toast.success("The User Registered Succesfully.");
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.error(error);
+    }
   };
+
   return (
     <form
       onSubmit={handleSubmit(saveUser)}
