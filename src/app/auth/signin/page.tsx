@@ -1,10 +1,17 @@
 import SignInForm from "@/app/components/SignInForm";
 import Link from "next/link";
 
-const SigninPage = () => {
+interface Props {
+  searchParams: {
+    callbackUrl?: string;
+  };
+}
+
+const SigninPage = ({ searchParams }: Props) => {
+  console.log({ searchParams });
   return (
-    <div>
-      <SignInForm />
+    <div className="flex items-center justify-center flex-col">
+      <SignInForm callbackUrl={searchParams.callbackUrl} />
       <Link href={"/auth/forgotPass"}>Forgot Your Password?</Link>
     </div>
   );
