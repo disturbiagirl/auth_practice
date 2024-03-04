@@ -23,4 +23,7 @@ export async function sendEmail({
   } catch (e) {
     console.log(e);
   }
+  try {
+    const;
+  } catch (error) {}
 }
