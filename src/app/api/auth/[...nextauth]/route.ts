@@ -47,6 +47,10 @@ export const authOptions: AuthOptions = {
           throw new Error("Password is not correct");
         }
 
+        if (!user.emailVerified) {
+          throw new Error("Please activate your account");
+        }
+
         const { password, ...userWithoutPass } = user;
         return userWithoutPass;
       },
