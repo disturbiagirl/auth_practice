@@ -3,7 +3,11 @@
 import { User } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import * as bcrypt from "bcrypt";
-import { compileActivationTemplate, sendEmail } from "../mail";
+import {
+  compileActivationTemplate,
+  sendEmail,
+  compileResetPassTemplate,
+} from "../mail";
 import { signJwt, verifyJwt } from "../jwt";
 
 export async function registerUser(
@@ -43,3 +47,23 @@ export const activateUser: ActivateUserFunc = async (jwtUserID) => {
   });
   return "success";
 };
+
+export async function forgotPassword(email: string) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const jwtUserId = signJwt({ id: user.id });
+  const resetPasswordUrl = `${process.env.NEXTAUTH_URL}/auth/resetPass/${jwtUserId}`;
+  const body = compileResetPassTemplate(user.firstName, resetPasswordUrl);
+  const sendResult = await sendEmail({
+    to: user.email,
+    subject: "Reset your password",
+    body: body,
+  });
+  return sendResult;
+}
