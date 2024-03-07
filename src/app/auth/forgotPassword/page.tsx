@@ -28,7 +28,7 @@ const ForgotPassword = () => {
   const submitRequest: SubmitHandler<InputType> = async (data) => {
     try {
       const result = await forgotPassword(data.email);
-      if (result !== undefined)
+      if (result !== null)
         toast.success("Reset password link was sent to your email.");
       reset();
     } catch (e) {
