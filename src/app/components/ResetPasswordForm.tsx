@@ -1,13 +1,15 @@
 "use client";
 
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input, Button } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/20/solid";
 import { passwordStrength } from "check-password-strength";
 import PasswordStrength from "./PasswordStrength";
+import { resetPassword } from "@/lib/actions/authActions";
+import { toast } from "react-toastify";
 
 interface Props {
   jwtUserId: string;
@@ -46,8 +48,22 @@ const ResetPasswordForm = ({ jwtUserId }: Props) => {
     setPassStrength(passwordStrength(watch().password).id);
   }, [watch().password]);
 
+  const resetPass: SubmitHandler<InputType> = async (data) => {
+    try {
+      const result = await resetPassword(jwtUserId, data.password);
+      if (result === "success")
+        toast.success("Your password has been reset successfully!");
+    } catch (e) {
+      toast.error("Something went wrong!");
+      console.error(e);
+    }
+  };
+
   return (
-    <form className="flex flex-col gap-2 m-2 p-2 border rounded-md shadow text-center">
+    <form
+      onSubmit={handleSubmit(resetPass)}
+      className="flex flex-col gap-2 m-2 p-2 border rounded-md shadow text-center"
+    >
       <p>Reset Your Password</p>
       <Input
         label="Password"

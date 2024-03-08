@@ -67,3 +67,31 @@ export async function forgotPassword(email: string) {
   });
   return sendResult;
 }
+
+type ResetPasswordFunc = (
+  jwtUserId: string,
+  newPassword: string
+) => Promise<"userNotExist" | "success">;
+
+export const resetPassword: ResetPasswordFunc = async (jwtUserId, password) => {
+  const payload = verifyJwt(jwtUserId);
+  if (!payload) return "userNotExist";
+  const userId = payload.id;
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+  if (!user) return "userNotExist";
+
+  const result = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      password: await bcrypt.hash(password, 10),
+    },
+  });
+  if (result) return "success";
+  else throw new Error("Something went wrong!");
+};
